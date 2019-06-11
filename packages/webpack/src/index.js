@@ -1,5 +1,4 @@
-const { resolve } = require('path');
-const root = resolve(__dirname, '..');
+const { resolve, dirname } = require('path');
 
 module.exports = (env, argv) => {
     const mode = argv.mode || 'production';
@@ -10,11 +9,11 @@ module.exports = (env, argv) => {
         },
 
         resolve: {
-            extensions: ['.mjs', '.js', '.svelte'],
+            extensions: ['.mjs', '.js', '.svelte', '.wasm'],
         },
 
         output: {
-            path: resolve(root, 'dist'),
+            path: resolve(__dirname, '..', 'dist'),
             filename: '[name].[hash].js',
         },
 
@@ -32,6 +31,11 @@ module.exports = (env, argv) => {
 
             new (require('mini-css-extract-plugin'))({
                 filename: '[name].[hash].css',
+            }),
+
+            // @ts-ignore
+            new (require('@wasm-tool/wasm-pack-plugin'))({
+                crateDirectory: resolve(dirname(require.resolve('@game-of-life/game')), '..'),
             }),
         ],
     };

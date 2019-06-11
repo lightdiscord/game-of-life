@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "svelte": "^3.5.1",
-    "svelte-routing": "^1.2.0"
+    "svelte-routing": "^1.2.0",
+    "@game-of-life/game": "file:../game"
   }
 }
