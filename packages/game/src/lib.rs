@@ -1,4 +1,4 @@
-#![feature(drain_filter)]
+#![feature(drain_filter, vec_remove_item)]
 
 use wasm_bindgen::prelude::*;
 
@@ -7,14 +7,15 @@ pub struct Ecosystem {
     width: usize,
     height: usize,
     alives: Vec<usize>,
-    immutable: bool,
     cycle: usize,
 }
 
+#[wasm_bindgen]
 pub struct Index;
 
+#[wasm_bindgen]
 impl Index {
-    fn new_with_coords_and_width(x: usize, y: usize, width: usize) -> usize {
+    pub fn new_with_coords_and_width(x: usize, y: usize, width: usize) -> usize {
         y * width + x
     }
 
@@ -57,7 +58,6 @@ impl Ecosystem {
             width,
             height,
             alives,
-            immutable: false,
             cycle: 0
         }
     }
@@ -66,8 +66,18 @@ impl Ecosystem {
         <Ecosystem as Iterator>::next(self)
     }
 
-    fn is_alive(&self, idx: &usize) -> bool {
-        self.alives.contains(idx)
+    pub fn is_alive(&self, idx: usize) -> bool {
+        self.alives.contains(&idx)
+    }
+
+    pub fn toggle(&mut self, idx: usize) -> bool {
+        if self.is_alive(idx) {
+            self.alives.remove_item(&idx);
+            false
+        } else {
+            self.alives.push(idx);
+            true
+        }
     }
 }
 
@@ -75,20 +85,15 @@ impl Iterator for Ecosystem {
     type Item = Vec<usize>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.immutable {
-            return None;
-        }
-
-        let current = self.alives.clone();
         let mut next = Vec::new();
 
         for x in 0..self.width {
             for y in 0..self.height {
                 let idx = Index::new_with_coords_and_width(x, y, self.width);
-                let alive = self.is_alive(&idx);
+                let alive = self.is_alive(idx);
                 let mut around = Index::around(idx, self.width, self.height);
                 let around = around
-                    .drain_filter(|idx| self.is_alive(idx))
+                    .drain_filter(|idx| self.is_alive(*idx))
                     .collect::<Vec<_>>()
                     .len();
 
@@ -98,19 +103,9 @@ impl Iterator for Ecosystem {
             }
         }
 
-        if current == next {
-            self.immutable = true;
-            return None;
-        }
-
         self.alives = next;
         self.cycle += 1;
 
         Some(self.alives.clone())
     }
-}
-
-#[wasm_bindgen]
-pub fn sum(a: usize, b: usize) -> usize {
-    a + b
 }

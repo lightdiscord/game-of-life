@@ -16,5 +16,8 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "pixi.js": "^5.0.4"
   }
 }
