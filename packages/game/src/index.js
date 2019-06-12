@@ -4,9 +4,8 @@ import { createTextures, TILE_WIDTH } from './textures';
 export const bindings = import('../pkg');
 
 export const createInstance = ({ width, height, pixi = {}, alives = new Uint32Array(0) }) => bindings.then(({ Ecosystem, Index }) => {
-    console.log('instance')
     const application = new Application(pixi);
-    const ecosystem = Ecosystem.new(width, height, [width, width + 1,width + 2]);
+    const ecosystem = Ecosystem.new(width, height, alives);
 
     application.view.width = TILE_WIDTH * width;
     application.view.height = TILE_WIDTH * height;

@@ -3,11 +3,9 @@
     import { createInstance } from '@game-of-life/game';
 
     let canvas;
-    let instance
 
     onMount(() => {
-        console.log('lol')
-        instance = createInstance({
+        const instance = createInstance({
             width: 20,
             height: 10,
             pixi: {
@@ -18,9 +16,6 @@
 
         return () => {};
     })
-
-    onMount
-
 </script>
 
 <h1>Hello, world!</h1>
